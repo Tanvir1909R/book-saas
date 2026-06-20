@@ -50,11 +50,6 @@ export default function UserDetailsPage() {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-
-  useEffect(() => {
-    fetchUser();
-  }, [userId]);
-
   async function fetchUser() {
     try {
       const response = await fetch(`/api/admin/users/${userId}`);
@@ -75,9 +70,12 @@ export default function UserDetailsPage() {
       setLoading(false);
     }
   }
+  useEffect(() => {
+    fetchUser();
+  }, [userId]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
@@ -124,7 +122,11 @@ export default function UserDetailsPage() {
   };
 
   const handleDelete = async () => {
-    if (!confirm(`Are you sure you want to delete this user account? This action cannot be undone and will delete all their data including favorites, reading history, and reviews.`)) {
+    if (
+      !confirm(
+        `Are you sure you want to delete this user account? This action cannot be undone and will delete all their data including favorites, reading history, and reviews.`,
+      )
+    ) {
       return;
     }
 
@@ -216,16 +218,24 @@ export default function UserDetailsPage() {
               <div className="w-24 h-24 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full flex items-center justify-center text-white text-4xl font-bold mb-4">
                 {user.fullName.charAt(0).toUpperCase()}
               </div>
-              <h2 className="text-xl font-bold text-gray-900 text-center">{user.fullName}</h2>
+              <h2 className="text-xl font-bold text-gray-900 text-center">
+                {user.fullName}
+              </h2>
               <p className="text-sm text-gray-600 mt-1">{user.email}</p>
               <div className="mt-4 flex flex-col items-center space-y-2">
-                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                  user.role === "ADMIN" ? "bg-red-100 text-red-700" : "bg-blue-100 text-blue-700"
-                }`}>
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                    user.role === "ADMIN"
+                      ? "bg-red-100 text-red-700"
+                      : "bg-blue-100 text-blue-700"
+                  }`}
+                >
                   {user.role}
                 </span>
                 {user.emailVerified && (
-                  <span className="text-xs text-green-600">✓ Email Verified</span>
+                  <span className="text-xs text-green-600">
+                    ✓ Email Verified
+                  </span>
                 )}
               </div>
             </div>
@@ -233,17 +243,25 @@ export default function UserDetailsPage() {
 
           {/* Subscription Info */}
           <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Subscription</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-4">
+              Subscription
+            </h3>
             <div className="space-y-3">
               <div>
                 <p className="text-sm text-gray-600">Plan</p>
-                <p className="font-semibold text-gray-900">{user.subscriptionTier}</p>
+                <p className="font-semibold text-gray-900">
+                  {user.subscriptionTier}
+                </p>
               </div>
               <div>
                 <p className="text-sm text-gray-600">Status</p>
-                <span className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${
-                  user.subscriptionStatus === "ACTIVE" ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700"
-                }`}>
+                <span
+                  className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${
+                    user.subscriptionStatus === "ACTIVE"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-gray-100 text-gray-700"
+                  }`}
+                >
                   {user.subscriptionStatus}
                 </span>
               </div>
@@ -272,30 +290,42 @@ export default function UserDetailsPage() {
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600">Favorites</span>
-                <span className="font-semibold text-gray-900">{user._count.favorites}</span>
+                <span className="font-semibold text-gray-900">
+                  {user._count.favorites}
+                </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600">Reviews</span>
-                <span className="font-semibold text-gray-900">{user._count.reviews}</span>
+                <span className="font-semibold text-gray-900">
+                  {user._count.reviews}
+                </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600">Books Read</span>
-                <span className="font-semibold text-gray-900">{user._count.readingHistory}</span>
+                <span className="font-semibold text-gray-900">
+                  {user._count.readingHistory}
+                </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600">Listen Time</span>
-                <span className="font-semibold text-gray-900">{formatListenTime(user.audioListenTime)}</span>
+                <span className="font-semibold text-gray-900">
+                  {formatListenTime(user.audioListenTime)}
+                </span>
               </div>
             </div>
           </div>
 
           {/* Account Info */}
           <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Account Info</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-4">
+              Account Info
+            </h3>
             <div className="space-y-3">
               <div>
                 <p className="text-sm text-gray-600">User ID</p>
-                <code className="text-xs text-gray-900 bg-gray-100 px-2 py-1 rounded">{user.id}</code>
+                <code className="text-xs text-gray-900 bg-gray-100 px-2 py-1 rounded">
+                  {user.id}
+                </code>
               </div>
               <div>
                 <p className="text-sm text-gray-600">Joined</p>
@@ -325,7 +355,9 @@ export default function UserDetailsPage() {
               )}
 
               <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                <h2 className="text-xl font-bold text-gray-900 mb-4">Edit User Information</h2>
+                <h2 className="text-xl font-bold text-gray-900 mb-4">
+                  Edit User Information
+                </h2>
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -337,7 +369,7 @@ export default function UserDetailsPage() {
                       value={formData.fullName}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                      className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg"
                     />
                   </div>
 
@@ -349,7 +381,7 @@ export default function UserDetailsPage() {
                       name="role"
                       value={formData.role}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                      className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg"
                     >
                       <option value="USER">User</option>
                       <option value="ADMIN">Admin</option>
@@ -364,7 +396,7 @@ export default function UserDetailsPage() {
                       name="subscriptionTier"
                       value={formData.subscriptionTier}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                      className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg"
                     >
                       <option value="FREE">Free</option>
                       <option value="MONTHLY">Monthly</option>
@@ -381,7 +413,7 @@ export default function UserDetailsPage() {
                       name="subscriptionStatus"
                       value={formData.subscriptionStatus}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                      className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg"
                     >
                       <option value="ACTIVE">Active</option>
                       <option value="INACTIVE">Inactive</option>
@@ -399,7 +431,10 @@ export default function UserDetailsPage() {
                       onChange={handleChange}
                       className="w-4 h-4 text-indigo-600"
                     />
-                    <label htmlFor="emailVerified" className="text-sm font-medium text-gray-700">
+                    <label
+                      htmlFor="emailVerified"
+                      className="text-sm font-medium text-gray-700"
+                    >
                       Email Verified
                     </label>
                   </div>
@@ -439,18 +474,32 @@ export default function UserDetailsPage() {
               {/* Favorites */}
               {user.favorites.length > 0 && (
                 <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                  <h3 className="text-lg font-bold text-gray-900 mb-4">Recent Favorites</h3>
+                  <h3 className="text-lg font-bold text-gray-900 mb-4">
+                    Recent Favorites
+                  </h3>
                   <div className="space-y-3">
                     {user.favorites.map((fav) => (
-                      <div key={fav.id} className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg">
+                      <div
+                        key={fav.id}
+                        className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg"
+                      >
                         {fav.book.coverImageUrl && (
-                          <img src={fav.book.coverImageUrl} alt={fav.book.title} className="w-12 h-16 object-cover rounded" />
+                          <img
+                            src={fav.book.coverImageUrl}
+                            alt={fav.book.title}
+                            className="w-12 h-16 object-cover rounded"
+                          />
                         )}
                         <div className="flex-1">
-                          <Link href={`/admin/books/${fav.book.id}/details`} className="font-semibold text-gray-900 hover:text-indigo-600">
+                          <Link
+                            href={`/admin/books/${fav.book.id}/details`}
+                            className="font-semibold text-gray-900 hover:text-indigo-600"
+                          >
                             {fav.book.title}
                           </Link>
-                          <p className="text-sm text-gray-600">{fav.book.author}</p>
+                          <p className="text-sm text-gray-600">
+                            {fav.book.author}
+                          </p>
                         </div>
                       </div>
                     ))}
@@ -461,26 +510,44 @@ export default function UserDetailsPage() {
               {/* Reading History */}
               {user.readingHistory.length > 0 && (
                 <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                  <h3 className="text-lg font-bold text-gray-900 mb-4">Reading History</h3>
+                  <h3 className="text-lg font-bold text-gray-900 mb-4">
+                    Reading History
+                  </h3>
                   <div className="space-y-3">
                     {user.readingHistory.map((history) => (
-                      <div key={history.id} className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg">
+                      <div
+                        key={history.id}
+                        className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg"
+                      >
                         {history.book.coverImageUrl && (
-                          <img src={history.book.coverImageUrl} alt={history.book.title} className="w-12 h-16 object-cover rounded" />
+                          <img
+                            src={history.book.coverImageUrl}
+                            alt={history.book.title}
+                            className="w-12 h-16 object-cover rounded"
+                          />
                         )}
                         <div className="flex-1">
-                          <Link href={`/admin/books/${history.book.id}/details`} className="font-semibold text-gray-900 hover:text-indigo-600">
+                          <Link
+                            href={`/admin/books/${history.book.id}/details`}
+                            className="font-semibold text-gray-900 hover:text-indigo-600"
+                          >
                             {history.book.title}
                           </Link>
-                          <p className="text-sm text-gray-600">{history.book.author}</p>
+                          <p className="text-sm text-gray-600">
+                            {history.book.author}
+                          </p>
                           <div className="mt-1 flex items-center space-x-3">
                             <div className="flex-1 bg-gray-200 rounded-full h-2">
                               <div
                                 className="bg-indigo-600 h-2 rounded-full"
-                                style={{ width: `${history.completionPercentage}%` }}
+                                style={{
+                                  width: `${history.completionPercentage}%`,
+                                }}
                               />
                             </div>
-                            <span className="text-xs text-gray-600">{history.completionPercentage}%</span>
+                            <span className="text-xs text-gray-600">
+                              {history.completionPercentage}%
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -492,28 +559,51 @@ export default function UserDetailsPage() {
               {/* Reviews */}
               {user.reviews.length > 0 && (
                 <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                  <h3 className="text-lg font-bold text-gray-900 mb-4">Recent Reviews</h3>
+                  <h3 className="text-lg font-bold text-gray-900 mb-4">
+                    Recent Reviews
+                  </h3>
                   <div className="space-y-4">
                     {user.reviews.map((review) => (
-                      <div key={review.id} className="p-4 border border-gray-200 rounded-lg">
+                      <div
+                        key={review.id}
+                        className="p-4 border border-gray-200 rounded-lg"
+                      >
                         <div className="flex items-start justify-between mb-2">
                           <div>
-                            <Link href={`/admin/books/${review.book.id}/details`} className="font-semibold text-gray-900 hover:text-indigo-600">
+                            <Link
+                              href={`/admin/books/${review.book.id}/details`}
+                              className="font-semibold text-gray-900 hover:text-indigo-600"
+                            >
                               {review.book.title}
                             </Link>
-                            <p className="text-sm text-gray-600">{review.book.author}</p>
+                            <p className="text-sm text-gray-600">
+                              {review.book.author}
+                            </p>
                           </div>
                           <div className="flex items-center">
                             {[...Array(5)].map((_, i) => (
-                              <span key={i} className={i < review.rating ? "text-yellow-400" : "text-gray-300"}>★</span>
+                              <span
+                                key={i}
+                                className={
+                                  i < review.rating
+                                    ? "text-yellow-400"
+                                    : "text-gray-300"
+                                }
+                              >
+                                ★
+                              </span>
                             ))}
                           </div>
                         </div>
                         {review.reviewTitle && (
-                          <h4 className="font-semibold text-gray-900 mb-1">{review.reviewTitle}</h4>
+                          <h4 className="font-semibold text-gray-900 mb-1">
+                            {review.reviewTitle}
+                          </h4>
                         )}
                         {review.reviewText && (
-                          <p className="text-sm text-gray-700">{review.reviewText}</p>
+                          <p className="text-sm text-gray-700">
+                            {review.reviewText}
+                          </p>
                         )}
                         <p className="text-xs text-gray-500 mt-2">
                           {new Date(review.createdAt).toLocaleDateString()}

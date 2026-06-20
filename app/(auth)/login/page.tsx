@@ -95,7 +95,7 @@ function LoginForm(){
         required
         value={formData.email}
         onChange={(e) => setFormData({ ...formData, email: e.target.value }) }    
-        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+        className="text-black w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
         placeholder="john@example.com"
         />
     </div>
@@ -118,7 +118,7 @@ function LoginForm(){
         required
         value={formData.password}
         onChange={(e) => setFormData({ ...formData, password: e.target.value }) }    
-        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+        className="text-black w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
         placeholder="••••••••"
         />
     </div>

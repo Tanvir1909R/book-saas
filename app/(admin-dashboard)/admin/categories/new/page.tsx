@@ -101,7 +101,7 @@ export default function NewCategoryPage(){
             onChange={handleChange}
             required
             placeholder="e.g., Business, Self-Help, Technology"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
             />
             {errors.name && ( 
             <p className="mt-1 text-sm text-red-600">{errors.name}</p>
@@ -118,7 +118,7 @@ export default function NewCategoryPage(){
             onChange={handleChange}
             rows={3}
             placeholder="Brief description of this category"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
             />
             {errors.description && ( 
             <p className="mt-1 text-sm text-red-600">description</p>
@@ -162,7 +162,7 @@ export default function NewCategoryPage(){
             value={formData.displayOrder}
             onChange={handleChange}
             min="0"
-            className="w-32 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            className="text-black w-32 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
             />
             <p className="mt-1 text-xs text-gray-500">
             Lower numbers appear first

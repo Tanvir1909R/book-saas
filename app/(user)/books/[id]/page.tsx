@@ -634,7 +634,7 @@ if (loading || !book) {
                 required
                 rows={4}
                 maxLength={1000}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="text-black w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 placeholder="Share your thoughts about this book (minimum 10 characters)..."
             />
             </div>

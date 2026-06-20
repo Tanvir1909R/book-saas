@@ -51,7 +51,7 @@ export default function AdminLoginPage(){
     <div className="w-12 h-12 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
         <span className="text-white font-bold text-2xl">B</span>
     </div>
-    <span className="text-3xl font-bold text-white">
+    <span className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
         BookWise Admin
     </span>
     </div>
@@ -84,7 +84,7 @@ export default function AdminLoginPage(){
         required
         value={formData.email}
         onChange={(e) => setFormData({ ...formData, email: e.target.value }) }        
-        className="w-full px-4 py-3 bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all placeholder-gray-400"
+        className="w-full px-4 py-3 bg-gray-700 border border-gray-600 text-black rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all placeholder-gray-400"
         placeholder="admin@bookwise.com"
         />
     </div>
@@ -99,7 +99,7 @@ export default function AdminLoginPage(){
         required
         value={formData.password}
         onChange={(e) => setFormData({ ...formData, password: e.target.value }) }    
-        className="w-full px-4 py-3 bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all placeholder-gray-400"
+        className="w-full px-4 py-3 bg-gray-700 border border-gray-600 text-black rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all placeholder-gray-400"
         placeholder="••••••••"
         />
     </div>

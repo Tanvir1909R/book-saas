@@ -1,120 +1,118 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 interface Category {
-    id: number;
-    name: string;
+  id: number;
+  name: string;
 }
 
-export default function AddNewBookPage(){
+export default function AddNewBookPage() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
+  const [coverImagePreview, setCoverImagePreview] = useState<string>("");
+  const [generatingSummary, setGeneratingSummary] = useState(false);
+  const [generatingAudio, setGeneratingAudio] = useState(false);
+  const [summaryProgress, setSummaryProgress] = useState("");
+  const [audioProgress, setAudioProgress] = useState("");
+  const [bookId, setBookId] = useState<number | null>(null);
 
-    const router = useRouter();
-    const [loading, setLoading] = useState(false);
-    const [categories, setCategories] = useState<Category[]>([]);
-    const [pdfFile, setPdfFile] = useState<File | null>(null);
-    const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
-    const [coverImagePreview, setCoverImagePreview] = useState<string>("");
-    const [generatingSummary, setGeneratingSummary] = useState(false);
-    const [generatingAudio, setGeneratingAudio] = useState(false);
-    const [summaryProgress, setSummaryProgress] = useState("");
-    const [audioProgress, setAudioProgress] = useState("");
-    const [bookId, setBookId] = useState<number | null>(null);
+  const [formData, setFormData] = useState({
+    title: "",
+    author: "",
+    categoryId: "",
+    description: "",
+    publicationYear: "",
+    isbn: "",
+    tags: "",
+    isFeatured: false,
+    isPublished: false,
+  });
 
-    const [formData, setFormData] = useState({
-        title: "",
-        author: "",
-        categoryId: "",
-        description: "",
-        publicationYear: "",
-        isbn: "",
-        tags: "",
-        isFeatured: false,
-        isPublished: false,
-    });
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-    const [errors, setErrors] = useState<Record<string,string>>({});
-
-    /// Fetch categories 
-    useEffect(() => {
-        async function fetchCategories(){
-            try {
-                const response = await fetch("/api/admin/categories");
-                if (response.ok) {
-                    const data = await response.json();
-                    setCategories(data);
-                }
-            } catch (error) {
-                console.error("Failed to fetch categories", error);
-            }
+  /// Fetch categories
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        const response = await fetch("/api/admin/categories");
+        if (response.ok) {
+          const data = await response.json();
+          setCategories(data);
         }
-        fetchCategories();
-    },[]);
+      } catch (error) {
+        console.error("Failed to fetch categories", error);
+      }
+    }
+    fetchCategories();
+  }, []);
 
-     const handleChange = (
-            e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement >
-        ) => {
-            const { name, value, type } = e.target;
-            const checked = (e.target as HTMLInputElement).checked;
-    
-            setFormData((prev) => ({
-                ...prev,
-                [name]: type === "checkbox" ? checked : value, 
-            }));
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
+    const { name, value, type } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
 
-            if (errors[name]) {
-                setErrors((prev) => ({ ...prev, [name]: ""}));
-            }
-        } 
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
 
-    const handleCoverImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            setCoverImageFile(file);
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setCoverImagePreview(reader.result as string);
-            }
-            reader.readAsDataURL(file);
-        }
-    };
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
 
-    const handlePdfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            setPdfFile(file);
-        }
-    };
+  const handleCoverImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setCoverImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCoverImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
+  const handlePdfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setPdfFile(file);
+    }
+  };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setLoading(true);
-        setErrors({});
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setErrors({});
 
     try {
-        
-    /// Upload Files first 
-    let coverImageUrl = "";
-    let pdfUrl = "";
+      /// Upload Files first
+      let coverImageUrl = "";
+      let pdfUrl = "";
 
-    if (coverImageFile) {
+      if (coverImageFile) {
         const formData = new FormData();
         formData.append("file", coverImageFile);
         formData.append("type", "cover");
 
         const uploadResponse = await fetch("/api/admin/upload", {
-            method: "POST",
-            body: formData,
+          method: "POST",
+          body: formData,
         });
 
         if (uploadResponse.ok) {
-            const data = await uploadResponse.json();
-            coverImageUrl = data.url;
-        } 
-    }
-
+          const data = await uploadResponse.json();
+          coverImageUrl = data.url;
+        }
+      }
 
       if (pdfFile) {
         const formData = new FormData();
@@ -122,123 +120,119 @@ export default function AddNewBookPage(){
         formData.append("type", "pdf");
 
         const uploadResponse = await fetch("/api/admin/upload", {
-            method: "POST",
-            body: formData,
+          method: "POST",
+          body: formData,
         });
 
         if (uploadResponse.ok) {
-            const data = await uploadResponse.json();
-            pdfUrl = data.url;
-        } 
-    }
+          const data = await uploadResponse.json();
+          pdfUrl = data.url;
+        }
+      }
 
-
-    // Create book 
-    const response = await fetch("/api/admin/books",{
+      // Create book
+      const response = await fetch("/api/admin/books", {
         method: "POST",
         headers: {
-            "Content-Type": "application/json",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            title: formData.title,
-            author: formData.author,
-            categoryId: parseInt(formData.categoryId),
-            description: formData.description,
-            publicationYear: formData.publicationYear ? parseInt(formData.publicationYear) : null,
-            isbn: formData.isbn || null,
-            tags: formData.tags || null,
-            coverImageUrl: coverImageUrl || null,
-            pdfUrl: pdfUrl || null,
-            isFeatured: formData.isFeatured,
-            isPublished: formData.isPublished,
-
+          title: formData.title,
+          author: formData.author,
+          categoryId: parseInt(formData.categoryId),
+          description: formData.description,
+          publicationYear: formData.publicationYear
+            ? parseInt(formData.publicationYear)
+            : null,
+          isbn: formData.isbn || null,
+          tags: formData.tags || null,
+          coverImageUrl: coverImageUrl || null,
+          pdfUrl: pdfUrl || null,
+          isFeatured: formData.isFeatured,
+          isPublished: formData.isPublished,
         }),
-     });
+      });
 
-     const data = await response.json();
-     if (!response.ok) {
+      const data = await response.json();
+      if (!response.ok) {
         if (data.errors) {
-            setErrors(data.errors);
-        }else {
-           setErrors({ general: data.error || "Failed to create book" }); 
+          setErrors(data.errors);
+        } else {
+          setErrors({ general: data.error || "Failed to create book" });
         }
         setLoading(false);
         return;
-     }
-     // Save book id for summary and audio generation 
-     setBookId(data.id);
-     setLoading(false);
+      }
+      // Save book id for summary and audio generation
+      setBookId(data.id);
+      setLoading(false);
 
-     // Show success messsage
-     toast.success("Book created successfully! You can now generate summary and audio");
+      // Show success messsage
+      toast.success(
+        "Book created successfully! You can now generate summary and audio",
+      );
     } catch (error) {
-       setErrors({ general: "Failed to create book" }); 
-        setLoading(false);
-     } 
+      setErrors({ general: "Failed to create book" });
+      setLoading(false);
+    }
+  };
 
-    };
-
-
-    /// Function for generate book summary by chatgpt api
-const handleGenerateSummary = async () => {
-    
+  /// Function for generate book summary by chatgpt api
+  const handleGenerateSummary = async () => {
     if (!bookId) {
       toast.error("Please save the book first before generating summary");
     }
-    
+
     setGeneratingSummary(true);
     setSummaryProgress("Extracting text from PDF...");
 
     try {
-        const response = await fetch("/api/admin/books/generate-summary", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ bookId }),
-        });
+      const response = await fetch("/api/admin/books/generate-summary", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ bookId }),
+      });
 
-        const reader = response.body?.getReader();
-        const decoder = new TextDecoder();
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
 
-        if (reader) {
-            while(true) {
-                const { done, value } = await reader.read();
-                if (done) break;
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
 
-            const chunk = decoder.decode(value);
-            const lines = chunk.split("\n");
+          const chunk = decoder.decode(value);
+          const lines = chunk.split("\n");
 
-            for (const line of lines) {
-                    if (line.startsWith("data:")) {
-                    const data = JSON.parse(line.slice(6));
-                    setSummaryProgress(data.message);
+          for (const line of lines) {
+            if (line.startsWith("data:")) {
+              const data = JSON.parse(line.slice(6));
+              setSummaryProgress(data.message);
 
-                    if (data.completed) {
-                        setGeneratingSummary(false);
-                        toast.success("Summary generated successfully");
-                        // Refreah book data
-                        window.location.reload();
-                        break;
-                    }
-                    }                    
-                }
+              if (data.completed) {
+                setGeneratingSummary(false);
+                toast.success("Summary generated successfully");
+                // Refreah book data
+                window.location.reload();
+                break;
+              }
             }
-        }            
+          }
+        }
+      }
     } catch (error) {
-            setGeneratingSummary(false);
-            setSummaryProgress("");
-            toast.error("Failed to generate summary");
+      setGeneratingSummary(false);
+      setSummaryProgress("");
+      toast.error("Failed to generate summary");
     }
-};
+  };
 
+  /// Function for generate book summary Audio by chatgpt api
 
-
-/// Function for generate book summary Audio by chatgpt api 
-
-const handleGenerateAudio = async () => {
-
-   if (!bookId) {
+  const handleGenerateAudio = async () => {
+    if (!bookId) {
       toast.error("Please save the book first before generating summary");
     }
 
@@ -246,53 +240,50 @@ const handleGenerateAudio = async () => {
     setAudioProgress("Generating audio from summary...");
 
     try {
-        const response = await fetch("/api/admin/books/generate-audio", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ bookId }),
-        });
+      const response = await fetch("/api/admin/books/generate-audio", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ bookId }),
+      });
 
-        const reader = response.body?.getReader();
-        const decoder = new TextDecoder();
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
 
-        if (reader) {
-            while(true) {
-                const { done, value } = await reader.read();
-                if (done) break;
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
 
-            const chunk = decoder.decode(value);
-            const lines = chunk.split("\n");
+          const chunk = decoder.decode(value);
+          const lines = chunk.split("\n");
 
-            for (const line of lines) {
-                    if (line.startsWith("data:")) {
-                    const data = JSON.parse(line.slice(6));
-                    setAudioProgress(data.message);
+          for (const line of lines) {
+            if (line.startsWith("data:")) {
+              const data = JSON.parse(line.slice(6));
+              setAudioProgress(data.message);
 
-                    if (data.completed) {
-                        setGeneratingAudio(false);
-                        toast.success("Audio generated successfully");
-                        // Refreah book data
-                        window.location.reload();
-                        break;
-                    }
-                    }                    
-                }
+              if (data.completed) {
+                setGeneratingAudio(false);
+                toast.success("Audio generated successfully");
+                // Refreah book data
+                window.location.reload();
+                break;
+              }
             }
-        }            
+          }
+        }
+      }
     } catch (error) {
-            setGeneratingAudio(false);
-            setAudioProgress("");
-            toast.error("Failed to generate Audio");
+      setGeneratingAudio(false);
+      setAudioProgress("");
+      toast.error("Failed to generate Audio");
     }
-};
- 
+  };
 
-
-
-    return (
-        <div className="max-w-5xl mx-auto">
+  return (
+    <div className="max-w-5xl mx-auto">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Add New Book</h1>
         <p className="text-gray-600 mt-2">
@@ -302,13 +293,11 @@ const handleGenerateAudio = async () => {
 
       <div>
         <form onSubmit={handleSubmit} className="space-y-6">
-          
-       {errors.general && ( 
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-        {errors.general}
-        </div>
-        )}
-          
+          {errors.general && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+              {errors.general}
+            </div>
+          )}
 
           {/* Book Information */}
           <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
@@ -324,10 +313,10 @@ const handleGenerateAudio = async () => {
                   <input
                     type="text"
                     name="title"
-                    value={formData.title} 
+                    value={formData.title}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                     placeholder="Enter book title"
                   />
                 </div>
@@ -339,10 +328,10 @@ const handleGenerateAudio = async () => {
                   <input
                     type="text"
                     name="author"
-                    value={formData.author} 
+                    value={formData.author}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                     placeholder="Enter author name"
                   />
                 </div>
@@ -354,17 +343,17 @@ const handleGenerateAudio = async () => {
                 </label>
                 <select
                   name="categoryId"
-                  value={formData.categoryId} 
+                  value={formData.categoryId}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 >
                   <option value="">Select a category</option>
-                {categories.map((category) => ( 
+                  {categories.map((category) => (
                     <option key={category.id} value={category.id}>
-                    {category.name}
+                      {category.name}
                     </option>
-                  ))} 
+                  ))}
                 </select>
               </div>
 
@@ -374,11 +363,11 @@ const handleGenerateAudio = async () => {
                 </label>
                 <textarea
                   name="description"
-                  value={formData.description} 
+                  value={formData.description}
                   onChange={handleChange}
                   required
                   rows={4}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   placeholder="Enter book description"
                 />
               </div>
@@ -390,11 +379,11 @@ const handleGenerateAudio = async () => {
                   </label>
                   <input
                     type="file"
-                    accept="image/*" 
+                    accept="image/*"
                     onChange={handleCoverImageChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                   />
-                {coverImagePreview && ( 
+                  {coverImagePreview && (
                     <img
                       src={coverImagePreview}
                       alt="Cover preview"
@@ -409,16 +398,15 @@ const handleGenerateAudio = async () => {
                   </label>
                   <input
                     type="file"
-                    accept=".pdf" 
+                    accept=".pdf"
                     onChange={handlePdfChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg"
                   />
-                 {pdfFile && ( 
+                  {pdfFile && (
                     <p className="text-sm text-green-600 mt-2">
                       ✓ {pdfFile.name}
                     </p>
-                   )}
-                  
+                  )}
                 </div>
               </div>
 
@@ -430,11 +418,11 @@ const handleGenerateAudio = async () => {
                   <input
                     type="number"
                     name="publicationYear"
-                    value={formData.publicationYear} 
+                    value={formData.publicationYear}
                     onChange={handleChange}
                     min="1900"
                     max={new Date().getFullYear()}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                    className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg"
                     placeholder="2024"
                   />
                 </div>
@@ -446,9 +434,9 @@ const handleGenerateAudio = async () => {
                   <input
                     type="text"
                     name="isbn"
-                    value={formData.isbn} 
+                    value={formData.isbn}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                    className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg"
                     placeholder="978-0-123456-78-9"
                   />
                 </div>
@@ -460,9 +448,9 @@ const handleGenerateAudio = async () => {
                   <input
                     type="text"
                     name="tags"
-                    value={formData.tags} 
+                    value={formData.tags}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                    className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg"
                     placeholder="business, finance"
                   />
                 </div>
@@ -480,12 +468,15 @@ const handleGenerateAudio = async () => {
                 <input
                   type="checkbox"
                   id="isFeatured"
-                  name="isFeatured"  
+                  name="isFeatured"
                   checked={formData.isFeatured}
                   onChange={handleChange}
                   className="w-4 h-4 text-indigo-600"
                 />
-                <label htmlFor="isFeatured" className="text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="isFeatured"
+                  className="text-sm font-medium text-gray-700"
+                >
                   Featured Book (Show on homepage)
                 </label>
               </div>
@@ -494,12 +485,15 @@ const handleGenerateAudio = async () => {
                 <input
                   type="checkbox"
                   id="isPublished"
-                  name="isPublished" 
+                  name="isPublished"
                   checked={formData.isPublished}
                   onChange={handleChange}
                   className="w-4 h-4 text-indigo-600"
                 />
-                <label htmlFor="isPublished" className="text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="isPublished"
+                  className="text-sm font-medium text-gray-700"
+                >
                   Publish Book (Make visible to users)
                 </label>
               </div>
@@ -515,19 +509,19 @@ const handleGenerateAudio = async () => {
           {/* Action Buttons */}
           <div className="flex items-center justify-end space-x-4">
             <button
-              type="button" 
-              onClick={() => router.back() }
+              type="button"
+              onClick={() => router.back()}
               className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50"
-              disabled={loading} 
+              disabled={loading}
             >
               Cancel
             </button>
             <button
               type="submit"
               className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-semibold hover:shadow-lg disabled:opacity-50"
-              disabled={loading} 
+              disabled={loading}
             >
-             {loading ? "Creating..." : "Create Book"} 
+              {loading ? "Creating..." : "Create Book"}
             </button>
           </div>
         </form>
@@ -543,7 +537,7 @@ const handleGenerateAudio = async () => {
                 Generate AI-powered summary using ChatGPT
               </p>
 
-              {summaryProgress && ( 
+              {summaryProgress && (
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                   <p className="text-sm text-blue-800">{summaryProgress}</p>
                 </div>
@@ -554,14 +548,16 @@ const handleGenerateAudio = async () => {
                 disabled={generatingSummary}
                 className="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg font-semibold hover:shadow-lg disabled:opacity-50"
               >
-              {generatingSummary ? "Generating..." : "Generate Summary with ChatGPT"}  
+                {generatingSummary
+                  ? "Generating..."
+                  : "Generate Summary with ChatGPT"}
               </button>
             </div>
           </div>
         )}
 
         {/* Audio Generation */}
-        {bookId && ( 
+        {bookId && (
           <div className="mt-6 bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
             <h2 className="text-xl font-bold text-gray-900 mb-4">
               🎧 Audio Generation
@@ -571,23 +567,23 @@ const handleGenerateAudio = async () => {
                 Generate audio using Text-to-Speech
               </p>
 
-              {audioProgress && ( 
+              {audioProgress && (
                 <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
                   <p className="text-sm text-purple-800">{audioProgress}</p>
                 </div>
-               )}
+              )}
 
               <button
                 onClick={handleGenerateAudio}
                 disabled={generatingAudio}
                 className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-semibold hover:shadow-lg disabled:opacity-50"
               >
-               {generatingAudio ? "Generating" : "🎧 Generate Audio"} 
+                {generatingAudio ? "Generating" : "🎧 Generate Audio"}
               </button>
             </div>
           </div>
-         )}
+        )}
       </div>
     </div>
-    );
+  );
 }

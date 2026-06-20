@@ -290,7 +290,7 @@ const handleGenerateAudio = async () => {
                     value={formData.title} 
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                     placeholder="Enter book title"
                   />
                 </div>
@@ -305,7 +305,7 @@ const handleGenerateAudio = async () => {
                     value={formData.author} 
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                     placeholder="Enter author name"
                   />
                 </div>
@@ -320,7 +320,7 @@ const handleGenerateAudio = async () => {
                   value={formData.categoryId} 
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 >
                   <option value="">Select a category</option>
                 {categories.map((category) => ( 
@@ -341,7 +341,7 @@ const handleGenerateAudio = async () => {
                   onChange={handleChange}
                   required
                   rows={4}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   placeholder="Enter book description"
                 />
               </div>
@@ -360,7 +360,7 @@ const handleGenerateAudio = async () => {
                     onChange={handleChange}
                     min="1900"
                     max={new Date().getFullYear()}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                    className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg"
                     placeholder="2024"
                   />
                 </div>
@@ -374,7 +374,7 @@ const handleGenerateAudio = async () => {
                     name="isbn"
                     value={formData.isbn} 
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                    className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg"
                     placeholder="978-0-123456-78-9"
                   />
                 </div>  
