@@ -41,7 +41,11 @@ export async function middleware(req:NextRequest) {
     }
 
     if (isAuthPage && isLoggedIn) {
-        return NextResponse.redirect(new URL("/dashboard", nextUrl.origin));
+        if(isAdmin){
+            return NextResponse.redirect(new URL("/admin/dashboard", nextUrl.origin));
+        }else{
+            return NextResponse.redirect(new URL("/dashboard", nextUrl.origin));
+        }
     }
 
     return NextResponse.next();
